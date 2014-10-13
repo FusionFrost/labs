@@ -11,6 +11,7 @@
 int main()
 {
 	char dir_to[64]; //путь к директории
+        char dir_min[32]; 
 	struct dirent *dir_entry; // структура директории
 
   //выглядит следующим образом
@@ -54,14 +55,16 @@ int main()
 	DIR *directory; //работа с директорией (для открытия и закрытия)
 
     printf("\n Input you directory \n");
-    scanf("%s",dir_to);
-    
-    if ( (directory = opendir(dir_to) ) != NULL )
+    scanf("%s",dir_min);
+    strcpy(dir_to,dir_min);
+    if ( (directory = opendir(dir_min) ) != NULL )
     {
     	while( (dir_entry = readdir(directory)) != NULL )
     	{
-            if ( stat(dir_entry->d_name, &stat_b) != (-1) )
+    	    strcat(dir_to,dir_entry->d_name);
+            if ( stat(dir_to->d_name, &stat_b) != (-1) )
             {
+            	
             	printf("File name: %s\n",dir_entry->d_name);
             	if (dir_entry->d_type == DT_UNKNOWN){ printf("File type : UNKNOWN \n");}
             	if (dir_entry->d_type == DT_REG){ printf("File type : REGULAR \n");}
@@ -80,7 +83,7 @@ int main()
                 printf("Last status change: %s", ctime(&stat_b.st_ctime));
                 printf("Last file access: %s", ctime(&stat_b.st_atime));
                 printf("Last file modification: %s\n", ctime(&stat_b.st_mtime));
-                
+                strcpy(dir_to,dir_min);
             } else 
             continue;
 
