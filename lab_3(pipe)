@@ -1,0 +1,47 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <time.h>
+#include <string.h>
+
+
+int main()
+{
+  time_t  timeparent,timeson;
+  size_t size;
+  int fd[2];
+  char array[100];
+  int k = pipe(fd);
+  pid_t pid;
+  switch(pid = fork())
+    {
+      case -1: printf("can't fork\n");
+               exit(-1);
+      case 0 :
+                   
+                   time(&timeson);
+                   printf("present time: %s\n",ctime(&timeson));
+                   close(fd[0]);
+                   write(fd[1], ctime(&timeson),strlen(ctime(&timeson)) + 1 );
+                   close(fd[1]);
+                   printf("PID = %d;time:%s\n",getpid(), ctime(&timeson));
+
+               exit(0);
+      default:     
+                   sleep(2);
+                   time(&timeparent);
+                   printf("present time: %s\n",ctime(&timeparent));
+                   close(fd[1]);
+                   read(fd[0], array, sizeof(array));
+                   close(fd[0]);
+
+                   printf("PID = %d;time:%s\n", getpid(),array);
+
+    }
+
+
+return 0;
+}
